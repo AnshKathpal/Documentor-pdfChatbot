@@ -29,6 +29,22 @@ CORS(app)
 #         pdf_text += page.extract_text()
 #     return pdf_text
 
+@app.route('/upload', methods=['POST'])
+def upload_pdf():
+    try:
+        uploaded_file = request.files['file']
+        if uploaded_file.filename != '':
+            target_directory = "./docs"
+            os.makedirs(target_directory, exist_ok=True)
+            file_path = os.path.join(target_directory, uploaded_file.filename)
+            uploaded_file.save(file_path)
+            return jsonify({"message": "PDF file uploaded and saved successfully"})
+        else:
+            return jsonify({"error": "No file selected"})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+
 @app.route('/chat', methods=['POST'])
 def chat():
     try:
@@ -39,15 +55,29 @@ def chat():
 
         print(f"Query: {query}")
 
+        # pdf_files = [f for f in os.listdir("/docs") if f.endswith('.pdf')]
+        # if not pdf_files:
+        #     return jsonify({"error": "No PDF file found in the 'docs' directory"})
+        # latest_pdf_file = max(pdf_files, key=os.path.getctime)
+        # pdf_file_path = os.path.join('/docs', latest_pdf_file)
+
+        # print(f"Using PDF file: {pdf_file_path}")
+
         # Load the PDF and perform text processing
-        # pdf_file_path = "./docs/text.pdf"
-        # print(f"Attempting to load PDF from: {pdf_file_path}")
+        pdf_file_path = "docs/text.pdf"
+        print(f"Attempting to load PDF from: {pdf_file_path}")
 
         # pdf_text = extract_pdf_text(pdf_file_path)
 
-        loader = PyPDFLoader("./docs/text.pdf")
+        loader = PyPDFLoader(pdf_file_path)
         pages = loader.load()
+
+        
+
+        # loader = PyPDFLoader("./docs/text.pdf")
+        # pages = loader.load()
         len(pages)
+        print(len)
 
 
 
@@ -59,7 +89,6 @@ def chat():
         len(splits)
         # print(splits)
 
-        # Create a vector store
         persist_directory = "docs/chroma/"
         vectordb = Chroma.from_documents(
             documents=splits,
@@ -67,13 +96,11 @@ def chat():
             persist_directory=persist_directory
         )
         
-        # Initialize ConversationBufferMemory
         memory = ConversationBufferMemory(
             memory_key="chat_history",
             return_messages=True
         )
 
-        # Initialize the chat model and retrieval QA chain
         llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5)
         retriever = vectordb.as_retriever()
         qa_chain = RetrievalQA.from_chain_type(
@@ -82,7 +109,6 @@ def chat():
             memory=memory
         )
 
-        # Query the model
         result = qa_chain({"query": query})
         answer = result.get("result")
         print(answer)
@@ -99,7 +125,6 @@ def chat():
         #     similar_documents_json.append(document_dict)
         
 
-        # Create ConversationalRetrievalChain
         conversation_chain = ConversationalRetrievalChain.from_llm(
             llm,
             retriever=retriever,
@@ -107,7 +132,6 @@ def chat():
         )
 
 
-        # Continue the conversation
         conversation_result = conversation_chain({"question": query})
         conversation_answer = conversation_result["answer"]
 
