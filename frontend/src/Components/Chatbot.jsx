@@ -8,11 +8,8 @@ export const Chatbot = () => {
 
   const [userMessage,setUserMessage]= useState("");
   
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setSelectedFile(file);
-  };
+  console.log(selectedFile)
+ 
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,12 +25,20 @@ export const Chatbot = () => {
           },
         });
         console.log(res.data);
+        const { original_filename, file_path } = res.data;
+        console.log("Original Filename:", original_filename);
+        console.log("Unique Filename:", file_path);
+        setSelectedFile(file_path)
       } catch (error) {
         console.log(error);
       }
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setSelectedFile(file);
+  };
 
   const handleSubmitChat = async (e) => {
 
@@ -41,10 +46,12 @@ export const Chatbot = () => {
 
     try {
   let res = await axios.post("http://127.0.0.1:5000/chat", {
-    query : userMessage
+    query : userMessage,
+    file_path: selectedFile ? `${selectedFile}` : null,
   } )
+  console.log("Response from server:", res);
   const chatReply = await res.data.result;
-  console.log(chatReply)
+  console.log("Chat Reply:", chatReply);
   
 } catch (error) {
   
