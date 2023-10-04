@@ -30,7 +30,6 @@ app = Flask(__name__)
 CORS(app)
 
 
-
 @app.route('/upload', methods=['POST'])
 def upload_pdf():
     try:
@@ -38,8 +37,6 @@ def upload_pdf():
         if uploaded_file.filename != '':
             target_directory = "./docs"
             os.makedirs(target_directory, exist_ok=True)
-            # file_path = os.path.join(target_directory, uploaded_file.filename)
-            # uploaded_file.save(file_path)
             unique_filename = str(uuid.uuid4()) + ".pdf"
             file_path = os.path.join(target_directory, unique_filename)
             uploaded_file.save(file_path)
@@ -48,7 +45,6 @@ def upload_pdf():
                 "original_filename": uploaded_file.filename,
                 "file_path": file_path
             })
-            # return jsonify({"message": "PDF file uploaded and saved successfully", "file_path": file_path})
         else:
             return jsonify({"error": "No file selected"})
     except Exception as e:
@@ -79,15 +75,12 @@ def chat():
             len(pages)
             print(len)
 
-
-
             text_splitter = RecursiveCharacterTextSplitter(
                 chunk_size=1000,
                 chunk_overlap=200
             )
             splits = text_splitter.split_documents(pages)
             len(splits)
-        # print(splits)
 
             persist_directory = "docs/chroma/"
             vectordb = Chroma.from_documents(
@@ -95,11 +88,11 @@ def chat():
                 embedding=OpenAIEmbeddings(),
                 persist_directory=persist_directory
             )
-        
+
             memory = ConversationBufferMemory(
                 memory_key="chat_history",
                 return_messages=True
-            ) 
+            )
 
             llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.5)
             retriever = vectordb.as_retriever()
@@ -113,7 +106,6 @@ def chat():
             answer = result.get("result")
             print(answer)
 
-
         # similar_documents = vectordb.similarity_search(query, k=3)
         # similar_documents_json = []
         # for document in similar_documents:
@@ -123,14 +115,12 @@ def chat():
         # # Include any other relevant fields here
         #     }
         #     similar_documents_json.append(document_dict)
-        
 
             conversation_chain = ConversationalRetrievalChain.from_llm(
                 llm,
                 retriever=retriever,
                 memory=memory
             )
-
 
             conversation_result = conversation_chain({"question": query})
             conversation_answer = conversation_result["answer"]
@@ -147,6 +137,7 @@ def chat():
 
     except Exception as e:
         return jsonify({"error": str(e)})
+
 
 if __name__ == '__main__':
     app.run(debug=True)
