@@ -4,6 +4,8 @@ import { useState } from "react";
 import axios from "axios";
 import { FcUpload } from "react-icons/fc";
 import styled, { keyframes, css } from "styled-components";
+import robo from "../Images/robot.png"
+import loading from "../Images/loading.gif"
 
 export const Chatbot = () => {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,11 +14,16 @@ export const Chatbot = () => {
   const [userMessage, setUserMessage] = useState("");
   const [chatResult, setChatResult] = useState([]);
   const [isChatFormVisible, setIsChatFormVisible] = useState(false);
+  const [visibleName,setVisibleName] = useState(null)
+  const [isLoading, setIsLoading] = useState(false);
+
 
   console.log(isAnimationActive);
   console.log(selectedFile, "selectedFile");
   console.log(chooseName);
   console.log("res", chatResult);
+  console.log("visibleName", visibleName)
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,6 +36,7 @@ export const Chatbot = () => {
       setTimeout(() => {
         setChooseName("File Uploaded");
         setIsChatFormVisible(true);
+        setVisibleName(chooseName)
       }, 7000);
       const formData = new FormData();
       formData.append("file", selectedFile);
@@ -58,6 +66,9 @@ export const Chatbot = () => {
   const handleSubmitChat = async (e) => {
     e.preventDefault();
 
+    setIsLoading(true);
+    setUserMessage("")
+
     try {
       let res = await axios.post("http://127.0.0.1:5000/chat", {
         query: userMessage,
@@ -75,10 +86,12 @@ export const Chatbot = () => {
 
       setChatResult(updatedConversation);
       console.log("Updated Chat Reply:", updatedConversation);
+      setIsLoading(false);
     } catch (error) {
       console.log(error.message);
     }
   };
+
 
   return (
     <Flex h="100vh" bg="#F8F0E5">
@@ -89,6 +102,7 @@ export const Chatbot = () => {
         w="30%"
         direction={"column"}
         align={"center"}
+        shadow = " rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;"
       >
         <Text
           fontSize={"6xl"}
@@ -134,13 +148,20 @@ export const Chatbot = () => {
               cursor="pointer"
             />
           </LoadingStyle>
-          <Button mt="10px" type="submit">
+          <Button bg = "#DAC0A3" mt="10px" type="submit">
             Upload
           </Button>
         </form>
       </Flex>
 
-      <Box bg="#EADBC8" w="60%" h="70vh" m="auto" borderRadius="30px">
+      <Flex direction={"column"}  w = "60%" m="auto" gap = "5">
+      <Box textAlign={"left"} pl = "25px" fontSize={"xl"} fontFamily={"'Lilita One', cursive"} >
+  {visibleName}
+</Box>
+<Box bg="#EADBC8" h="70vh"  borderRadius="30px" pos = "relative" boxShadow="rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;">
+
+<img style={{position : "absolute" , opacity : "0.1" , left : "50%", top : "50%", transform : "translate(-50%,-50%)"}} src={robo} alt="" />
+  
         {isChatFormVisible && (
           <form
             onSubmit={handleSubmitChat}
@@ -155,13 +176,15 @@ export const Chatbot = () => {
               value={userMessage}
               onChange={(e) => setUserMessage(e.target.value)}
               textAlign="center"
-              placeholder="Ask from your PDF here.."
+              placeholder="Ask Questions from your PDF here.."
+              fontWeight={"semibold"}c
             />
-            <Button mt="15px" type="submit">
+            <Button _hover={{bg : "#0F2C59"}} color = "white" bg = "#0F2C59" mt="15px" type="submit">
               Submit
             </Button>
           </form>
         )}
+       
         <Box h="80%" overflowY="scroll">
           {chatResult.map((message, index) => (
             <div
@@ -197,8 +220,23 @@ export const Chatbot = () => {
               </div>
             </div>
           ))}
+          <Box>
+          {isLoading && (
+            <div className="loader" style={{ textAlign: "center"}}>
+              <img
+                style={{ mixBlendMode: "multiply", width: "15%", position : "relative", left : "20px" }}
+                src={loading}
+                alt=""
+              />
+            </div>
+          )}
+          </Box>
         </Box>
+        
       </Box>
+      </Flex>
+
+      
     </Flex>
   );
 };
