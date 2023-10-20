@@ -37,6 +37,14 @@ DocuMentor is a sophisticated chatbot application designed to assist users in ex
 ### Database
 - **ChromaDB**: ChromaDB is integrated to store vector searches for efficient retrieval and similarity searching.
 
+<img width="1680" alt="Screenshot 2023-10-21 at 2 55 40 AM" src="https://github.com/AnshKathpal/Documentor-pdfChatbot/assets/115460552/c929a0eb-8e66-4fbe-bb74-2f4fadc6ff1f">
+
+<img width="1680" alt="Screenshot 2023-10-21 at 2 57 41 AM" src="https://github.com/AnshKathpal/Documentor-pdfChatbot/assets/115460552/7bb6bd05-3079-4322-8ae6-271b40c78e02">
+
+<img width="1680" alt="Screenshot 2023-10-21 at 2 58 35 AM" src="https://github.com/AnshKathpal/Documentor-pdfChatbot/assets/115460552/fde17306-c79d-4c82-835f-b2fb5d9125b9">
+
+<img width="1680" alt="Screenshot 2023-10-21 at 3 00 22 AM" src="https://github.com/AnshKathpal/Documentor-pdfChatbot/assets/115460552/54dbfbf7-e092-46bc-93b8-6e5ceef53507">
+
 ## Installation and Setup
 1. Clone the repository from GitHub.
 
