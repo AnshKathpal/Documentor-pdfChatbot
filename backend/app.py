@@ -128,6 +128,7 @@ def chat():
             response = {
                 "result": answer,
                 "conversation_result": conversation_answer
+                
                 # "similar_documents": similar_documents_json
             }
 
