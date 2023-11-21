@@ -20,5 +20,4 @@ PyPika
 pytest
 python-dotenv
 requests
-tiktoken
 uvicorn
