@@ -21,3 +21,5 @@ pytest
 python-dotenv
 requests
 uvicorn
+pydantic==1.9.0
+
