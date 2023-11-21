@@ -6,7 +6,7 @@ debugpy
 Flask
 Flask-Cors
 Flask-PyMongo
-gunicorn
+Gunicorn
 jq
 jupyter_client
 jupyter_core
